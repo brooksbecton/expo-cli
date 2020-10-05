@@ -167,18 +167,10 @@ export function readConfigJson(
     return '';
   };
 
-  let outputRootConfig = rawStaticConfig as JSONObject | null;
-  if (outputRootConfig === null || typeof outputRootConfig !== 'object') {
-    if (skipValidation) {
-      outputRootConfig = { expo: {} };
-    } else {
-      throw new ConfigError(
-        `Project at path ${path.resolve(
-          projectRoot
-        )} does not contain a valid Expo config${getConfigName()}`,
-        'NOT_OBJECT'
-      );
-    }
+  let outputRootConfig = (rawStaticConfig as JSONObject) || null;
+
+  if (outputRootConfig === null) {
+    outputRootConfig = { expo: {} };
   }
   let exp = outputRootConfig.expo as Partial<ExpoConfig>;
   if (exp === null || typeof exp !== 'object') {
