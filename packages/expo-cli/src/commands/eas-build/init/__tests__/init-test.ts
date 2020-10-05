@@ -9,6 +9,7 @@ const mockedUser = {
   username: 'jester',
 };
 
+jest.mock('@expo/spawn-async');
 jest.mock('fs');
 jest.mock('../../../../projects', () => {
   return {

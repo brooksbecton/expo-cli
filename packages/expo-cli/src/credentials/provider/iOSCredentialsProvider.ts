@@ -38,6 +38,7 @@ export default class iOSCredentialsProvider implements CredentialsProvider {
   public async initAsync() {
     await this.ctx.init(this.projectDir, {
       nonInteractive: this.options.nonInteractive,
+      skipCredentialsCheck: this.options.skipCredentialsCheck,
     });
   }
 

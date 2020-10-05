@@ -20,6 +20,7 @@ interface AppleCtxOptions {
 interface CtxOptions extends AppleCtxOptions {
   allowAnonymous?: boolean;
   nonInteractive?: boolean;
+  skipCredentialsCheck?: boolean;
 }
 
 export class Context {
@@ -33,9 +34,14 @@ export class Context {
   _appleCtxOptions?: AppleCtxOptions;
   _appleCtx?: AppleCtx;
   _nonInteractive?: boolean;
+  _skipCredentialsCheck?: boolean;
 
   get nonInteractive(): boolean {
     return this._nonInteractive === true;
+  }
+
+  get skipCredentialsCheck(): boolean {
+    return this._skipCredentialsCheck === true;
   }
 
   get user(): User {
@@ -104,6 +110,7 @@ export class Context {
     this._androidApiClient = new AndroidApi(this.api);
     this._appleCtxOptions = pick(options, ['appleId', 'appleIdPassword', 'teamId']);
     this._nonInteractive = options.nonInteractive;
+    this._skipCredentialsCheck = options.skipCredentialsCheck;
 
     // try to acccess project context
     try {

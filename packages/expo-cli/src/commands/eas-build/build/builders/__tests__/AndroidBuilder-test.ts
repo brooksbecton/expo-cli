@@ -2,6 +2,7 @@ import { vol } from 'memfs';
 
 import AndroidBuilder from '../AndroidBuilder';
 
+jest.mock('@expo/spawn-async');
 jest.mock('fs');
 jest.mock('../../../../../git');
 jest.mock('../../../../../credentials/context', () => {

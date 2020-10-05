@@ -38,7 +38,9 @@ export class SetupAndroidBuildCredentialsFromLocal implements IView {
   async open(ctx: Context): Promise<IView | null> {
     let localCredentials;
     try {
-      localCredentials = await credentialsJsonReader.readAndroidCredentialsAsync(ctx.projectDir);
+      localCredentials = await credentialsJsonReader.readAndroidCredentialsAsync(ctx.projectDir, {
+        skipCredentialsCheck: ctx.skipCredentialsCheck,
+      });
     } catch (error) {
       log.error(
         'Reading credentials from credentials.json failed. Make sure this file is correct and all credentials are present there.'

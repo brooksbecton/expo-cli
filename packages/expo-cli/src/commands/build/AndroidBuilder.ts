@@ -61,9 +61,10 @@ export default class AndroidBuilder extends BaseBuilder {
 
   async collectAndValidateCredentials(): Promise<void> {
     const nonInteractive = this.options.parent?.nonInteractive;
+    const skipCredentialsCheck = this.options.skipCredentialsCheck;
 
     const ctx = new Context();
-    await ctx.init(this.projectDir, { nonInteractive });
+    await ctx.init(this.projectDir, { nonInteractive, skipCredentialsCheck });
 
     const experienceName = `@${ctx.manifest.owner || ctx.user.username}/${ctx.manifest.slug}`;
 

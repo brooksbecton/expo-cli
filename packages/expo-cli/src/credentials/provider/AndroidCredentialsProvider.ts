@@ -18,6 +18,7 @@ interface AppLookupParams {
 
 interface Options {
   nonInteractive: boolean;
+  skipCredentialsCheck: boolean;
 }
 
 export default class AndroidCredentialsProvider implements CredentialsProvider {
@@ -34,6 +35,7 @@ export default class AndroidCredentialsProvider implements CredentialsProvider {
   public async initAsync() {
     await this.ctx.init(this.projectDir, {
       nonInteractive: this.options.nonInteractive,
+      skipCredentialsCheck: this.options.skipCredentialsCheck,
     });
   }
 
@@ -59,7 +61,9 @@ export default class AndroidCredentialsProvider implements CredentialsProvider {
     try {
       const [remote, local] = await Promise.all([
         this.ctx.android.fetchKeystore(this.projectFullName),
-        await credentialsJsonReader.readAndroidCredentialsAsync(this.projectDir),
+        await credentialsJsonReader.readAndroidCredentialsAsync(this.projectDir, {
+          skipCredentialsCheck: this.options.skipCredentialsCheck,
+        }),
       ]);
       const r = remote!;
       const l = local?.keystore!;
@@ -101,7 +105,9 @@ export default class AndroidCredentialsProvider implements CredentialsProvider {
   }
 
   private async getLocalAsync(): Promise<AndroidCredentials> {
-    const credentials = await credentialsJsonReader.readAndroidCredentialsAsync(this.projectDir);
+    const credentials = await credentialsJsonReader.readAndroidCredentialsAsync(this.projectDir, {
+      skipCredentialsCheck: this.options.skipCredentialsCheck,
+    });
     if (!this.isValidKeystore(credentials.keystore)) {
       throw new Error('Invalid keystore in credentials.json');
     }

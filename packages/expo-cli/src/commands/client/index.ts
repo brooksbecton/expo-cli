@@ -101,6 +101,7 @@ export default function (program: Command) {
           ...options,
           allowAnonymous: true,
           nonInteractive: options.parent?.nonInteractive,
+          skipCredentialsCheck: false,
         });
         await context.ensureAppleCtx();
         const appleContext = context.appleCtx;

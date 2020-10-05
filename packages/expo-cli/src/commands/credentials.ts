@@ -25,6 +25,7 @@ export default function (program: CommanderStatic) {
         const context = new Context();
         await context.init(projectDir, {
           nonInteractive: options.parent?.nonInteractive,
+          skipCredentialsCheck: false,
         });
         let mainpage;
         if (options.platform === 'android') {

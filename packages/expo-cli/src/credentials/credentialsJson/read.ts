@@ -1,7 +1,11 @@
+import spawnAsync from '@expo/spawn-async';
 import Joi from '@hapi/joi';
+import commandExists from 'command-exists';
 import fs from 'fs-extra';
 import path from 'path';
+import terminalLink from 'terminal-link';
 
+import log from '../../log';
 import { Keystore } from '../credentials';
 
 interface CredentialsJson {
@@ -62,12 +66,20 @@ export async function fileExistsAsync(projectDir: string): Promise<boolean> {
   return await fs.pathExists(path.join(projectDir, 'credentials.json'));
 }
 
-export async function readAndroidCredentialsAsync(projectDir: string): Promise<AndroidCredentials> {
+export async function readAndroidCredentialsAsync(
+  projectDir: string,
+  { skipCredentialsCheck }: { skipCredentialsCheck: boolean }
+): Promise<AndroidCredentials> {
   const credentialsJson = await readAsync(projectDir);
   if (!credentialsJson.android) {
     throw new Error('Android credentials are missing from credentials.json'); // TODO: add fyi
   }
   const keystoreInfo = credentialsJson.android.keystore;
+
+  if (!skipCredentialsCheck) {
+    await validateKeystoreAsync(keystoreInfo);
+  }
+
   return {
     keystore: {
       keystore: await fs.readFile(getAbsolutePath(projectDir, keystoreInfo.keystorePath), 'base64'),
@@ -132,6 +144,46 @@ export async function readRawAsync(projectDir: string): Promise<any> {
   } catch (err) {
     throw new Error(
       `credentials.json must exist in the project root directory and contain a valid JSON`
+    );
+  }
+}
+
+async function validateKeystoreAsync({
+  keystorePath,
+  keystorePassword,
+  keyAlias,
+}: {
+  keystorePath: string;
+  keystorePassword: string;
+  keyAlias: string;
+}) {
+  try {
+    await commandExists('keytool');
+  } catch (e) {
+    log.warn(
+      `Couldn't validate the provided keystore because the 'keytool' command is not available. Make sure that you have a Java Development Kit installed. See ${terminalLink(
+        'https://openjdk.java.net',
+        'https://openjdk.java.net'
+      )} to install OpenJDK.`
+    );
+    return;
+  }
+
+  try {
+    await spawnAsync('keytool', [
+      '-list',
+      '-keystore',
+      keystorePath,
+      '-storepass',
+      keystorePassword,
+      '-alias',
+      keyAlias,
+    ]);
+  } catch (e) {
+    throw new Error(
+      `An error occurred when validating the keystore at '${keystorePath}': ${
+        e.stdout || e.message
+      }\nMake sure that you provided correct credentials in 'credentials.json' and the path provided under 'keystorePath' points to a valid keystore file.`
     );
   }
 }

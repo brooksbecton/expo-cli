@@ -36,6 +36,7 @@ export async function fetchAndroidKeystoreAsync(
   const ctx = new Context();
   await ctx.init(projectDir, {
     nonInteractive: options.parent?.nonInteractive,
+    skipCredentialsCheck: false,
   });
 
   const keystoreFilename = `${ctx.manifest.slug}.jks`;
@@ -57,6 +58,7 @@ export async function fetchAndroidHashesAsync(projectDir: string, options: Optio
   const ctx = new Context();
   await ctx.init(projectDir, {
     nonInteractive: options.parent?.nonInteractive,
+    skipCredentialsCheck: false,
   });
   const outputPath = path.resolve(projectDir, `${ctx.manifest.slug}.tmp.jks`);
   try {
@@ -94,6 +96,7 @@ export async function fetchAndroidUploadCertAsync(
   const ctx = new Context();
   await ctx.init(projectDir, {
     nonInteractive: options.parent?.nonInteractive,
+    skipCredentialsCheck: false,
   });
 
   const keystorePath = path.resolve(projectDir, `${ctx.manifest.slug}.tmp.jks`);

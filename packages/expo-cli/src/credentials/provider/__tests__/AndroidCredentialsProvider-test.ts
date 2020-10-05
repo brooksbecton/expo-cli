@@ -13,6 +13,7 @@ const cliOptions = {
 
 const mockFetchKeystore = jest.fn();
 
+jest.mock('@expo/spawn-async');
 jest.mock('fs');
 jest.mock('../../route');
 jest.mock('../../context', () => {

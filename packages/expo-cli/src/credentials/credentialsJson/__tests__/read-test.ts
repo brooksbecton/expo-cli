@@ -24,7 +24,9 @@ describe('credentialsJson', () => {
         }),
         'keystore.jks': 'somebinarydata',
       });
-      const result = await credentialsJsonReader.readAndroidCredentialsAsync('.');
+      const result = await credentialsJsonReader.readAndroidCredentialsAsync('.', {
+        skipCredentialsCheck: true,
+      });
       expect(result).toEqual({
         keystore: {
           keystore: 'c29tZWJpbmFyeWRhdGE=',
@@ -35,7 +37,9 @@ describe('credentialsJson', () => {
       });
     });
     it('should throw error when credentials.json is missing', async () => {
-      const promise = credentialsJsonReader.readAndroidCredentialsAsync('.');
+      const promise = credentialsJsonReader.readAndroidCredentialsAsync('.', {
+        skipCredentialsCheck: true,
+      });
       await expect(promise).rejects.toThrow(
         'credentials.json must exist in the project root directory and contain a valid JSON'
       );
@@ -46,7 +50,9 @@ describe('credentialsJson', () => {
         './credentials.json': JSON.stringify({}),
         'keystore.jks': 'somebinarydata',
       });
-      const promise = credentialsJsonReader.readAndroidCredentialsAsync('.');
+      const promise = credentialsJsonReader.readAndroidCredentialsAsync('.', {
+        skipCredentialsCheck: true,
+      });
       await expect(promise).rejects.toThrow(
         'Android credentials are missing from credentials.json'
       );
@@ -64,7 +70,9 @@ describe('credentialsJson', () => {
         }),
         'keystore.jks': 'somebinarydata',
       });
-      const promise = credentialsJsonReader.readAndroidCredentialsAsync('.');
+      const promise = credentialsJsonReader.readAndroidCredentialsAsync('.', {
+        skipCredentialsCheck: true,
+      });
       await expect(promise).rejects.toThrow(
         'credentials.json is not valid [ValidationError: "android.keystore.keystorePath" is required]'
       );
@@ -82,7 +90,9 @@ describe('credentialsJson', () => {
           },
         }),
       });
-      const promise = credentialsJsonReader.readAndroidCredentialsAsync('.');
+      const promise = credentialsJsonReader.readAndroidCredentialsAsync('.', {
+        skipCredentialsCheck: true,
+      });
       await expect(promise).rejects.toThrow(
         "ENOENT: no such file or directory, open 'keystore.jks'"
       );
